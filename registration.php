@@ -23,30 +23,29 @@ USERNAME:</td><td><input type='text' name='username' autofocus></td>
 </table> </form>";
 
 if($_POST['registrationbtn']){
-$username = $_POST['username'];
-$password1 = $_POST['password1'];
-$password2 = $_POST['password2'];
-$email = $_POST['email'];
-$phonenumber = $_POST['phonenumber'];
  if (empty($_POST['username'])){
  	$nameErr = "Name is required";
  }
    else
      {
-     	if(preg_match('/^[A-Za-z0-9]+$/' , $_POST['username'])){
-     		$vusername == $_POST['username'];
+     	if(preg_match('/^[A-Za-z0-9]{3,}/' , $_POST['username'])){
+     		$vusername = $_POST['username'];
      	}
      	else{
      		die("invalid username. username must be abphabatical and numeric.$registration_form");
      	}
      }
-  if ($_POST['password1']===$_POST['password2']){
-  	$vpassword == md5(md5($_POST['password1']));
+     if(!empty($_POST['password1'])){
+  if ($_POST['password1']==$_POST['password2']){
+  	$vpassword = md5(md5("dhdh".$_POST['password1']."dgdh"));
   }
   else
   {
   	die("please provide the same password .$registration_form");
   }
+}
+else{ echo "please provide your password"; }
+
   if (empty($_POST['email'])){
   	die("please provide the email address.$registration_form");
   }
@@ -60,8 +59,9 @@ $phonenumber = $_POST['phonenumber'];
   	die("invalid email address.$registration_form"); 
   	}
   }
-if (filter_var($_POST['phonenumber'], FILTER_VALIDATE_INT)){
-	if(strlen($_POST['phonenumber']) <10 or strlen($_POST['phonenumber'>17])){
+  if(strlen($_POST['phonenumber'])>0){
+if (preg_match('/^[0-9]+$/', $_POST['phonenumber'])){
+	if(strlen($_POST['phonenumber']) < 9 || strlen($_POST['phonenumber']) > 17){
 	die("please provide a valid phonenumber.$registration_form");
 }else{
 	$vphonenumber = $_POST['phonenumber'];
@@ -69,10 +69,40 @@ if (filter_var($_POST['phonenumber'], FILTER_VALIDATE_INT)){
 }
 else
 {
-	die("please provide a valid phonenumber .$registration_form");
+	die("please provide a valid phonenumber aaaaaaaa.$registration_form");
+}
+}
+else {
+  $vphonenumber = 0;
 }
 $registration_date = date("Y-m-d H:i:s");
-// begin * from here 
+require("connect.php");
+$email_ckeck_query = "select `email` from user where email='$vemail'";
+$email_ckeck_result = mysqli_query($connect , $email_ckeck_query);
+$email_ckeck_row = mysqli_num_rows($email_ckeck_result);
+if ($email_ckeck_row==1){
+  echo "this email is alredy exists in system please go to forget password to recover your password.";
+  header('refresh:5; url=login.php');
+}else{
+
+$query = "insert into `user` (`username` , `password` , `email` , `phonenumber` , `active` , `registration_date`) values ('$vusername' , '$vpassword' ,
+ '$vemail' , '$vphonenumber' , '0' , '$registration_date') ";
+$result = mysqli_query($connect , $query) or die("please try again for registration");
+if ($result){
+  echo "registration success please check your email for account activation";
+/**********************************************************************************
+ for mail server 
+// The message
+ $message = "click this link for activation";
+
+// Send
+mail('$vemail', 'account activaton', $message);
+
+******************************************************************************/
+
+}
+}
+
 }
 else{
 	echo $registration_form;

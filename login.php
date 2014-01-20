@@ -11,6 +11,7 @@ $db_user = $_SESSION['username'];
 	<title>login system</title>
 </head>
 <body>
+	
 <?php 
 if(!empty($db_user)){
 	echo "you have already login as ".$username."<a href='member.php'>click here</a> to go to your member page";
@@ -18,8 +19,6 @@ if(!empty($db_user)){
 else
 {
 	$redirect = "<script> window.location='member.php'; </script>";
-$registartion = "<input type='button' name='registerbtn' value='register' >";
-$forget_password = "<input type='button' name='forgetPasswordbtn' value='forget password' >";
 $form = "<form action='./login.php' method='post' />
 <table>
 <tr>
@@ -33,8 +32,7 @@ $form = "<form action='./login.php' method='post' />
 <tr>
 <td><input type='submit' name='loginbtn' value='login' /></td>
 </tr>
-<tr><td><a href='registration.php'>$registartion</a></td>
-<td>$forget_password</td></tr>
+</table>
 </form> ";
 
 if ($_POST['loginbtn']){
@@ -65,6 +63,7 @@ if ($_POST['loginbtn']){
 		
 			}else{
 				echo "please check your email and activate your account";
+				exit();
 			}
 			}
 			else{
@@ -92,9 +91,14 @@ if ($_POST['loginbtn']){
 }
 else
 echo $form;
-
 }
-
 ?>
+<input type='button' name='registerbtn' value='register' onclick='registration()' />
+<input type='button' name='forgetPasswordbtn' value='forget password' />
+<script type='text/javascript'>
+	function registration(){
+	window.location='registration.php';
+}
+</script>
 </body>
 </html>

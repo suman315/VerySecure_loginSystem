@@ -5,3 +5,7 @@ $user_id=$_SESSION['userid'];
 $username = $_SESSION['username'];
 ?>
 <a href='login.php'>click here to login in </a>
+<br>
+<?php 
+echo date("Y-m-d H:i:s");
+?>

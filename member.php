@@ -21,7 +21,7 @@ if (!empty($db_user)){
  ?>
 
  <input type='button' name='logout' value='log out' onclick='logout()' >
- <script>
+ <script type='text/javascript'>
 function logout(){
 	window.location='logout.php';
 }
