@@ -1,6 +1,8 @@
 <?php 
 error_reporting(E_ALL ^ E_NOTICE);
 session_start();
+$db_user_id=$_SESSION['userid'];
+$db_user = $_SESSION['username'];
 ?>
 
 <!DOCTYPE html >
@@ -10,8 +12,13 @@ session_start();
 </head>
 <body>
 <?php
-
-$registration_form = "<form action='./registration.php' method='post' />
+$site = "http://dev.sumanpoudel.com";
+if ($db_user_id || $db_user){
+  echo "you have already activate your account please use the login page.";
+  header('refresh:5; url=$site/login.php');
+  
+}
+$registration_form = "<form action='$site/registration.php' method='post' />
 <table style='text-align:right;' >
 <tr><td>
 USERNAME:</td><td><input type='text' name='username' autofocus></td>
@@ -24,7 +31,7 @@ USERNAME:</td><td><input type='text' name='username' autofocus></td>
 
 if($_POST['registrationbtn']){
  if (empty($_POST['username'])){
- 	$nameErr = "Name is required";
+ 	die("userName is required .$registration_form");
  }
    else
      {
@@ -76,6 +83,7 @@ else {
   $vphonenumber = 0;
 }
 $registration_date = date("Y-m-d H:i:s");
+$code = md5(mt_rand(100, 100000));
 require("connect.php");
 $email_ckeck_query = "select `email` from user where email='$vemail'";
 $email_ckeck_result = mysqli_query($connect , $email_ckeck_query);
@@ -85,22 +93,35 @@ if ($email_ckeck_row==1){
   header('refresh:5; url=login.php');
 }else{
 
-$query = "insert into `user` (`username` , `password` , `email` , `phonenumber` , `active` , `registration_date`) values ('$vusername' , '$vpassword' ,
- '$vemail' , '$vphonenumber' , '0' , '$registration_date') ";
+$query = "insert into `user` (`username` , `password` , `email` , `phonenumber` , `active` , `registration_date` , `code`) values ('$vusername' , '$vpassword' ,
+ '$vemail' , '$vphonenumber' , '0' , '$registration_date' , '$code') ";
 $result = mysqli_query($connect , $query) or die("please try again for registration");
 if ($result){
   echo "registration success please check your email for account activation";
-/**********************************************************************************
- for mail server 
-// The message
- $message = "click this link for activation";
+$headers = 'From: no reply<contact@sumanpoudel.com>';
+$message = 'account activation link'.'<br>';
+$message .= $code .'<br>';
+$message .= "$site/activation.php?user=$vusername&code=$code";
+$subject = 'actiate your account';
 
 // Send
-mail('$vemail', 'account activaton', $message);
-
-******************************************************************************/
+if(mail($vemail, $subject, $message , $headers )){
+  echo "email has been sent to <b> $vemail </b> with an activation link";
+  $vusername = "";
+  $vpassword = "";
+  $vemail = "";
+}
+else{
+  die("an error has occured during sending you email");
+}
+//******************************************************************************/
 
 }
+   // closing the result 
+      mysqli_free_result($result);
+      mysqli_free_result($email_ckeck_result);
+            // closing the connection
+      mysqli_close($connect);
 }
 
 }

@@ -15,6 +15,7 @@ $db_user = $_SESSION['username'];
 <?php 
 if(!empty($db_user)){
 	echo "you have already login as ".$username."<a href='member.php'>click here</a> to go to your member page";
+	exit();
 }
 else
 {
