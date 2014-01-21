@@ -20,6 +20,7 @@ if ($db_user_id || $db_user){
 }
 $registration_form = "<form action='$site/registration.php' method='post' />
 <table style='text-align:right;' >
+<tr>$errmessage</tr>
 <tr><td>
 USERNAME:</td><td><input type='text' name='username' autofocus></td>
 <tr><td>PLEASE CHOOSE A PASSWORD:</td> <td><input type='password' name='password1'/></td></tr>
@@ -30,18 +31,10 @@ USERNAME:</td><td><input type='text' name='username' autofocus></td>
 </table> </form>";
 
 if($_POST['registrationbtn']){
- if (empty($_POST['username'])){
- 	die("userName is required .$registration_form");
- }
-   else
-     {
-     	if(preg_match('/^[A-Za-z0-9]{3,}/' , $_POST['username'])){
-     		$vusername = $_POST['username'];
-     	}
-     	else{
-     		die("invalid username. username must be abphabatical and numeric.$registration_form");
-     	}
-     }
+  require("./functions.php");
+  $username = $_POST['username'];
+ usernamecheck($username);
+
      if(!empty($_POST['password1'])){
   if ($_POST['password1']==$_POST['password2']){
   	$vpassword = md5(md5("dhdh".$_POST['password1']."dgdh"));
@@ -99,8 +92,7 @@ $result = mysqli_query($connect , $query) or die("please try again for registrat
 if ($result){
   echo "registration success please check your email for account activation";
 $headers = 'From: no reply<contact@sumanpoudel.com>';
-$message = 'account activation link'.'<br>';
-$message .= $code .'<br>';
+$message = "account activation link.<br>";
 $message .= "$site/activation.php?user=$vusername&code=$code";
 $subject = 'actiate your account';
 

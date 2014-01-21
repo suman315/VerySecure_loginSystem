@@ -1,35 +1,45 @@
 <?php
-if($_POST['registrationbtn'])
-{
-$username = $_POST['username'];
-$password1 = $_POST['password1'];
-$password2 = $_POST['password2'];
-$email = $_POST['email'];
-$phonenumber = $_POST['phonenumber'];
-if(preg_match('/^[A-Za-z0-9]+$/', $username)){
-	if($password1 == $password2){
-		if(filter_var($email , FILTER_VALIDATE_EMAIL)){
-
-		}
-		else
-		{
-			echo "please provide valid email address.$registration_form";
-		}
-	
-
-
-	}
-	else
-	{
-		echo "please enter the same password in both password field.$registration_form";
-	}
-
-}
-else
-{
-	echo "please provide a valid username. username should contain only latters and numbers.$registration_form";
+global $errmessage;
+function userNameCheck($string){
+ if (empty($string)){
+ 	$errmessage = "please provide your username";
+ }
+   else
+     {
+     	if(preg_match('/^[A-Za-z0-9]+$/' , $string)){
+     	$vusername = $string;
+     	}
+     	else{
+     		$errmessage = "invalid username  username must be abphabatical and numeric";
+     	}
+     }
 }
 
-}
+function passwordcheck($string1, $string2){
 
-?>
+	if(!empty($string1)){
+  if ($string1 === $string2){
+  	$vpassword = md5(md5("dhdh".$string1."dgdh"));
+  	return $vpassword;
+  }
+  else
+  {
+  	$errmessage = "please provide the same password";
+  	return $errmessage;
+  }
+}
+else{ 
+	$errmessage = "please provide your password";
+	return $errmessage;
+
+	 }
+
+}
+$string1 = "hdhdhdh";
+$string2 = "dhhdhd";
+
+passwordcheck($string1, $string2);
+
+echo $errmessage;
+
+ ?>

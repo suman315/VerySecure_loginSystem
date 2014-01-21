@@ -95,10 +95,13 @@ echo $form;
 }
 ?>
 <input type='button' name='registerbtn' value='register' onclick='registration()' />
-<input type='button' name='forgetPasswordbtn' value='forget password' />
+<input type='button' name='forgetPasswordbtn' value='forget password' onclick='forgetpassowordpage()' />
 <script type='text/javascript'>
 	function registration(){
 	window.location='registration.php';
+}
+function forgetpassowordpage(){
+	window.location='./forgetpassword.php';
 }
 </script>
 </body>
