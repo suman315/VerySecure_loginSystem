@@ -1,8 +1,8 @@
 <?php
-$username = 'sumanpoudel';
-$db_password = 'suman';
-$db_host = 'sumanpoudelcom.ipagemysql.com';
-$database = 'loginsystem';
+$db_username = '';//put your username here
+$db_password = ''; //put your database password here
+$db_host = '';//put your host here
+$database = ''; //your database name
 
-$connect = mysqli_connect("$db_host","$username","$db_password","$database");
+$connect = mysqli_connect("$db_host","$db_username","$db_password","$database");
 ?>

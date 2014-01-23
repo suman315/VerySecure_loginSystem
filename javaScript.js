@@ -1,1 +1,5 @@
-$redirect = window.location.replace("member.php");
+
+  function goToLogin(){
+   setTimeout(function(){
+   	window.location = './login.php'; }, 3000)
+}

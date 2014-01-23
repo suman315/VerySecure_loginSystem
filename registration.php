@@ -8,17 +8,19 @@ $db_user = $_SESSION['username'];
 <!DOCTYPE html >
 <html>
 <head>
-	<title>registration</title>
+  <title>registration</title>
 </head>
 <body>
+  <script src="./javaScript.js"></script>
 <?php
 $site = "http://dev.sumanpoudel.com";
 if ($db_user_id || $db_user){
   echo "you have already activate your account please use the login page.";
-  header('refresh:5; url=$site/login.php');
+  echo "<script> function goToLogin(){ setTimeout( function(){window.location = './login.php'; }, 3000)}";
+        echo "goToLogin(); </script>";
   
 }
-$registration_form = "<form action='$site/registration.php' method='post' />
+$registration_form = "<form action='./registration.php' method='post' />
 <table style='text-align:right;' >
 <tr>$errmessage</tr>
 <tr><td>
@@ -31,83 +33,66 @@ USERNAME:</td><td><input type='text' name='username' autofocus></td>
 </table> </form>";
 
 if($_POST['registrationbtn']){
-  require("./functions.php");
+    require("./functions.php");
   $username = $_POST['username'];
- usernamecheck($username);
+  $password1 = $_POST['password1'];
+  $password2 = $_POST['password2'];
+  $email = $_POST['email'];
+  $phonenumber = $_POST['phonenumber'];
 
-     if(!empty($_POST['password1'])){
-  if ($_POST['password1']==$_POST['password2']){
-  	$vpassword = md5(md5("dhdh".$_POST['password1']."dgdh"));
-  }
-  else
-  {
-  	die("please provide the same password .$registration_form");
-  }
-}
-else{ echo "please provide your password"; }
+  //checking username
+userNamecheck($username);
+ //checking password 
+passWordCheck($password1, $password2);
+//checking email
+emailCheck($email);
+//checking phonenumber
+phoneNumberCheck($phonenumber);
 
-  if (empty($_POST['email'])){
-  	die("please provide the email address.$registration_form");
+if(userNamecheck($username) && passWordCheck($password1, $password2) && emailCheck($email) && phoneNumberCheck($phonenumber)){ 
+require("./connect.php"); 
+  $query = "SELECT * FROM user WHERE `username` = '$username'";
+  $result = mysqli_query($connect, $query) or die("error checking username");
+  $user_check = mysqli_num_rows($result);
+  if($user_check == 1){
+    $errmessage = "this username already exitsts please try somthing else as username";
+    echo "$errmessage.$registration_form";
   }
-  else
-  {
-  	if(filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
-  		$vemail = $_POST['email'];
-  	}
-  	else
-  	{
-  	die("invalid email address.$registration_form"); 
-  	}
-  }
-  if(strlen($_POST['phonenumber'])>0){
-if (preg_match('/^[0-9]+$/', $_POST['phonenumber'])){
-	if(strlen($_POST['phonenumber']) < 9 || strlen($_POST['phonenumber']) > 17){
-	die("please provide a valid phonenumber.$registration_form");
-}else{
-	$vphonenumber = $_POST['phonenumber'];
-}
-}
-else
-{
-	die("please provide a valid phonenumber aaaaaaaa.$registration_form");
-}
-}
-else {
-  $vphonenumber = 0;
-}
+  else{
 $registration_date = date("Y-m-d H:i:s");
 $code = md5(mt_rand(100, 100000));
-require("connect.php");
-$email_ckeck_query = "select `email` from user where email='$vemail'";
+
+$email_ckeck_query = "select `email` from user where email='$email'";
 $email_ckeck_result = mysqli_query($connect , $email_ckeck_query);
 $email_ckeck_row = mysqli_num_rows($email_ckeck_result);
 if ($email_ckeck_row==1){
   echo "this email is alredy exists in system please go to forget password to recover your password.";
-  header('refresh:5; url=login.php');
+  echo "<script> goToLogin(); </script>";
 }else{
-
-$query = "insert into `user` (`username` , `password` , `email` , `phonenumber` , `active` , `registration_date` , `code`) values ('$vusername' , '$vpassword' ,
- '$vemail' , '$vphonenumber' , '0' , '$registration_date' , '$code') ";
+$password1 = md5(md5("dhdh".$password1."dgdh"));
+$query = "insert into `user` (`username` , `password` , `email` , `phonenumber` , `active` , `registration_date` , `code`) values ('$username' , '$password1' ,
+ '$email' , '$phonenumber' , '0' , '$registration_date' , '$code') ";
 $result = mysqli_query($connect , $query) or die("please try again for registration");
 if ($result){
-  echo "registration success please check your email for account activation";
 $headers = 'From: no reply<contact@sumanpoudel.com>';
 $message = "account activation link.<br>";
-$message .= "$site/activation.php?user=$vusername&code=$code";
+$message .= "$site/activation.php?user=$username&code=$code";
 $subject = 'actiate your account';
 
 // Send
-if(mail($vemail, $subject, $message , $headers )){
-  echo "email has been sent to <b> $vemail </b> with an activation link";
-  $vusername = "";
-  $vpassword = "";
-  $vemail = "";
+if(mail($email, $subject, $message , $headers )){
+  echo "email has been sent to <b> $email </b> with an activation link";
+  unset($username);
+  unset($password1);
+  unset($password2);
+  unset($phonenumber);
+  unset($email);
+  //redirecting to login page
+  echo "<script> goToLogin(); </script>";
 }
 else{
   die("an error has occured during sending you email");
 }
-//******************************************************************************/
-
 }
    // closing the result 
       mysqli_free_result($result);
@@ -115,13 +100,18 @@ else{
             // closing the connection
       mysqli_close($connect);
 }
+}
+}
+else{
+  echo "$errmessage.$registration_form";
+}
 
 }
 else{
-	echo $registration_form;
+  echo $registration_form;
 }
-
 ?>
+
 
 </body>
 </html>

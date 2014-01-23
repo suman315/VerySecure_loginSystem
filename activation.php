@@ -4,6 +4,11 @@ session_start();
 $db_user_id=$_SESSION['userid'];
 $db_user = $_SESSION['username'];
 ?>
+<!DOCTYPE html>
+<head>
+	<title>account activation</title>
+</head>
+<body>
 
 <?php
 $site = "http://dev.sumanpoudel.com";
@@ -33,7 +38,8 @@ if(preg_match('/^[A-Za-z0-9]+$/', $user)){
 			if($activation_check == 1){
 			
 				echo " you have sucessfully activated your account please login using your username <b> $user </b> and password";
-				header('refresh:5; url=$site/login.php');
+				echo "<script> function goToLogin(){ setTimeout( function(){window.location = './login.php'; }, 3000)}";
+				echo "goToLogin(); </script>";
 
 			}
 			else{
@@ -62,3 +68,5 @@ else{
 }
 
 ?>
+</body>
+</html>

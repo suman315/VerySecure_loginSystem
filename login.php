@@ -19,7 +19,7 @@ if(!empty($db_user)){
 }
 else
 {
-	$redirect = "<script> window.location='member.php'; </script>";
+	$redirect = "<script> window.location='./member.php'; </script>";
 $form = "<form action='./login.php' method='post' />
 <table>
 <tr>
@@ -58,6 +58,9 @@ if ($_POST['loginbtn']){
 				if($row ['active']==1){
 					$_SESSION['username'] = $db_user;
 					$_SESSION['userid'] = $db_user_id;
+					$logindate = date("Y-m-d H:i:s");
+					$query2 = "UPDATE `user` SET `last_login_date` = '$logindate' WHERE `username` = '$user' AND `password` = '$password'";
+					$result = mysqli_query($connect, $query2) or die("login date error");
 				echo "login success welcome.<b>$user</b>".' you will redirected to members page soon';
 				echo $redirect;
 
@@ -98,7 +101,7 @@ echo $form;
 <input type='button' name='forgetPasswordbtn' value='forget password' onclick='forgetpassowordpage()' />
 <script type='text/javascript'>
 	function registration(){
-	window.location='registration.php';
+	window.location='./registration.php';
 }
 function forgetpassowordpage(){
 	window.location='./forgetpassword.php';
