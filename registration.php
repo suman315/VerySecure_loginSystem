@@ -8,10 +8,29 @@ $db_user = $_SESSION['username'];
 <!DOCTYPE html >
 <html>
 <head>
-  <title>registration</title>
+  <script type="text/javascript">
+function findName(){
+    if (window.XMLHttpRequest){
+  xmlhttp=new XMLHttpRequest();
+  }
+else{
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("result").innerHTML=xmlhttp.responseText;
+    }
+  }
+paramiters = 'search_username='+document.getElementById("searchtext").value;
+xmlhttp.open("POST","search.php", true);
+xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+xmlhttp.send(paramiters);
+}
+   </script>
 </head>
 <body>
-  <script src="./javaScript.js"></script>
 <?php
 $site = "http://dev.sumanpoudel.com";
 if ($db_user_id || $db_user){
@@ -23,8 +42,9 @@ if ($db_user_id || $db_user){
 $registration_form = "<form action='./registration.php' method='post' />
 <table style='text-align:right;' >
 <tr>$errmessage</tr>
+<tr><div id='result'> </div></tr>
 <tr><td>
-USERNAME:</td><td><input type='text' name='username' autofocus></td>
+USERNAME:</td><td><input type='text' id='searchtext' name='username' onkeyup='findName();' autofocus></td>
 <tr><td>PLEASE CHOOSE A PASSWORD:</td> <td><input type='password' name='password1'/></td></tr>
 <tr><td>PLEASE CONFIRM YOUR PASSWORD:</td> <td><input type='password' name='password2' /></td></tr>
 <tr><td>EMAIL:</td><td><input type='email' name='email' /></td></tr>
